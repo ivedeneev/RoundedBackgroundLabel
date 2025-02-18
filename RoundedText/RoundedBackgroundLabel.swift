@@ -44,10 +44,12 @@ class RoundedBackgroundLabel: UILabel {
                 width: usedRect.width,
                 height: usedRect.height
             )
-                .insetBy(dx: -self.textPadding.left, dy: 0)
+//                .insetBy(dx: -self.textPadding.left, dy: 0)
 //                .insetBy(dx: 0, dy: -self.textPadding.top)
-            
-            lineRects.append(adjustedRect)
+                
+//            var bottom: CGFloat = adjustedRect.width > lineRects.last?.width ?? 0 ?
+            let padding = UIEdgeInsets(top: -self.textPadding.top, left: -self.textPadding.left, bottom: 0, right: -self.textPadding.left)
+            lineRects.append(adjustedRect.inset(by: padding))
             
             if points.isEmpty {
                 points.append(adjustedRect.origin)
@@ -68,6 +70,22 @@ class RoundedBackgroundLabel: UILabel {
             points.append(.init(x: adjustedRect.maxX, y: adjustedRect.maxY))
         }
         
+        var last = lineRects.removeLast()
+        last = last.inset(by: UIEdgeInsets(top: 0, left: 0, bottom: -self.textPadding.top, right: 0))
+        lineRects.append(last)
+        
+        for i in 0..<lineRects.count - 1 {
+            if lineRects[i].width < lineRects[i + 1].width {
+                var last = lineRects.remove(at: i)
+                last = last.inset(by: UIEdgeInsets(top: 0, left: 0, bottom: self.textPadding.top, right: 0))
+                lineRects.insert(last, at: i)
+            } else {
+                var last = lineRects.remove(at: i + 1)
+                last = last.inset(by: UIEdgeInsets(top: self.textPadding.top, left: 0, bottom: 0, right: 0))
+                lineRects.insert(last, at: i + 1)
+            }
+        }
+        
         points.append(.init(x: 0, y: rect.maxY))
         
         UIColor.systemBlue.withAlphaComponent(0.2).setFill()
@@ -86,7 +104,6 @@ class RoundedBackgroundLabel: UILabel {
     }
     
     func roundedPath(from points: [CGPoint], cornerRadius: CGFloat, boundingRect: CGRect) -> UIBezierPath {
-        print(points.map {$0.desc })
         guard points.count > 2 else { return UIBezierPath() }
 
             let path = UIBezierPath()
@@ -157,27 +174,36 @@ class RoundedBackgroundLabel: UILabel {
         var rightPoints = [CGPoint]()
         var leftPoints = [CGPoint]()
         for i in 0..<linesRects.count {
-            var lineRect = linesRects[i]
+            let lineRect = linesRects[i]
+
+//            let path = UIBezierPath(rect: lineRect)
+//            path.fill()
+//            
+            if rightPoints.count > 1, lineRect.maxX == rightPoints[rightPoints.count - 2].x {
+                rightPoints.removeLast()
+            } else {
+                rightPoints.append(.init(x: lineRect.maxX, y: lineRect.minY))
+            }
             
-            rightPoints.append(.init(x: lineRect.maxX, y: lineRect.minY))
+            if leftPoints.count > 1, lineRect.minX == leftPoints[leftPoints.count - 2].x {
+                leftPoints.removeLast()
+            } else {
+                leftPoints.append(.init(x: lineRect.minX, y: lineRect.minY))
+            }
+            
             rightPoints.append(.init(x: lineRect.maxX, y: lineRect.maxY))
-            leftPoints.append(.init(x: lineRect.minX, y: lineRect.minY))
             leftPoints.append(.init(x: lineRect.minX, y: lineRect.maxY))
         }
-        
-        var last1 = rightPoints.removeLast()
-        last1.y += textPadding.top
-        rightPoints.append(last1)
-        
-        var last2 = leftPoints.removeLast()
-        last2.y += textPadding.top
-        rightPoints.append(last2)
         
         var lastLeft = leftPoints.removeFirst()
         rightPoints.insert(lastLeft, at: 0)
         rightPoints.append(contentsOf: leftPoints.reversed())
-        
         let path = roundedPath(from: rightPoints, cornerRadius: cornerRadius, boundingRect: rect)
         path.fill()
     }
+}
+
+
+func unionOutline(of rects: [CGRect]) -> [CGPoint] {
+    fatalError()
 }

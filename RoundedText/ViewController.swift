@@ -26,7 +26,7 @@ class ViewController: UIViewController {
         
         let paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.alignment = .left
-//        paragraphStyle.alignment = .center
+        paragraphStyle.alignment = .center
         paragraphStyle.lineSpacing = label.textPadding.top
         
         // Create attributed string
@@ -37,22 +37,19 @@ class ViewController: UIViewController {
         
         var text = """
 I have
-the best pom in the world
-and i love Kristina
+the best dogs in the world
+and i love steaks
 and cats
 and i wanna find a new job so baaaaad
 """
         
 //        text = """
 //I have
-//the best pom in the world
 //"""
         let attributedText = NSAttributedString(string: text, attributes: attributes)
         
         label.attributedText = attributedText
     }
-
-
 }
 
 
