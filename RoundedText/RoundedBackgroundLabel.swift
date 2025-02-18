@@ -44,10 +44,6 @@ class RoundedBackgroundLabel: UILabel {
                 width: usedRect.width,
                 height: usedRect.height
             )
-//                .insetBy(dx: -self.textPadding.left, dy: 0)
-//                .insetBy(dx: 0, dy: -self.textPadding.top)
-                
-//            var bottom: CGFloat = adjustedRect.width > lineRects.last?.width ?? 0 ?
             let padding = UIEdgeInsets(top: -self.textPadding.top, left: -self.textPadding.left, bottom: 0, right: -self.textPadding.left)
             lineRects.append(adjustedRect.inset(by: padding))
             
@@ -91,8 +87,6 @@ class RoundedBackgroundLabel: UILabel {
         UIColor.systemBlue.withAlphaComponent(0.2).setFill()
         UIColor.systemBlue.setStroke()
         
-//        let path = roundedPath(from: points, cornerRadius: cornerRadius, boundingRect: rect)
-//        path.fill()
         test(rect: rect, linesRects: lineRects)
         super.drawText(in: rect.inset(by: textPadding))
     }
@@ -164,7 +158,6 @@ class RoundedBackgroundLabel: UILabel {
         
         let arcStartPoint = CGPoint(x: arcStartX, y: arcStartY)
         let arcEndPoint = CGPoint(x: arcEndX, y: arcEndY)
-        print(arcStartPoint.desc, arcEndPoint.desc)
         path.addLine(to: arcStartPoint)
         path.addQuadCurve(to: arcEndPoint, controlPoint: curr)
     }
@@ -175,10 +168,7 @@ class RoundedBackgroundLabel: UILabel {
         var leftPoints = [CGPoint]()
         for i in 0..<linesRects.count {
             let lineRect = linesRects[i]
-
-//            let path = UIBezierPath(rect: lineRect)
-//            path.fill()
-//            
+ 
             if rightPoints.count > 1, lineRect.maxX == rightPoints[rightPoints.count - 2].x {
                 rightPoints.removeLast()
             } else {
@@ -195,15 +185,10 @@ class RoundedBackgroundLabel: UILabel {
             leftPoints.append(.init(x: lineRect.minX, y: lineRect.maxY))
         }
         
-        var lastLeft = leftPoints.removeFirst()
+        let lastLeft = leftPoints.removeFirst()
         rightPoints.insert(lastLeft, at: 0)
         rightPoints.append(contentsOf: leftPoints.reversed())
         let path = roundedPath(from: rightPoints, cornerRadius: cornerRadius, boundingRect: rect)
         path.fill()
     }
-}
-
-
-func unionOutline(of rects: [CGRect]) -> [CGPoint] {
-    fatalError()
 }
