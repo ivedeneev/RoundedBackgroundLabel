@@ -31,10 +31,10 @@ class TextBackgroundDrawingUtil {
         layoutManager.addTextContainer(textContainer)
         textStorage.addLayoutManager(layoutManager)
 
-        // Get the number of lines
         var lineRects = [CGRect]()
         let range = NSRange(location: 0, length: layoutManager.numberOfGlyphs)
-    //        let range = NSRange(location: 1, length: 13)
+        
+        // TODO: use this for partial selection
     //        layoutManager.enumerateEnclosingRects(forGlyphRange: range, withinSelectedGlyphRange: range, in: textContainer) { usedRect, _ in
     //            print(usedRect)
     //            lineRects.append(self.lineRect(rawRect: usedRect))
@@ -72,7 +72,6 @@ class TextBackgroundDrawingUtil {
     private func adjustedLineRect(rawRect: CGRect, textPadding: UIEdgeInsets) -> CGRect {
         let lineOrigin = rawRect.origin
         
-        // Calculate the background rect for this line
         let adjustedRect = CGRect(
             x: lineOrigin.x + textPadding.left,
             y: lineOrigin.y + textPadding.top,
